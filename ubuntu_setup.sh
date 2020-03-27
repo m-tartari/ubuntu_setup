@@ -1,6 +1,7 @@
 #!/bin/bash
 echo -e "\e[1;32m*** Set-up procedure started \e[0m"
-script_path=$(dirname "$(readlink -f "$BASH_SOURCE")")
+# HOME=/home/$(whoami)
+SCRIPT_PATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 ### System Update
 echo -e "\e[1;36m** Updating system \e[0m"
@@ -9,33 +10,53 @@ sudo apt upgrade -y
 sudo apt full-upgrade -y
 echo -e "\e[1;36m** Done \e[0m"
 
+### Edit Grub
+echo -e "\n\e[1;36m** Modifying GRUB entries \e[0m"
+sudo add-apt-repository ppa:danielrichter2007/grub-customizer -y 
+sudo apt update
+sudo apt install grub-customizer -y
+#save last selected os (the command needs to be over 2 lines)
+sudo sed -i -e 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved\
+GRUB_SAVEDEFAULT=true/g' /etc/default/grub
+sudo update-grub
+echo -e "\e[1;36m** Done \e[0m"
+
 ### Utilities
-echo -e "\n\e[1;36m* Installing utilities \e[0m"
+echo -e "\n\e[1;36m** Installing utilities \e[0m"
+sudo apt update
 sudo apt install vlc -y
 sudo apt install gparted -y 
 # Terminator
 echo -e "\n\e[1;34m* Downloading Terminator\e[0m"
 sudo apt install terminator -y
-cp $script_path/pictures/terminator-debian-wallpaper.jpg ~/Pictures/terminator-debian-wallpaper.jpg
-sudo cp -r $script_path/config/terminator/ /home/$(whoami)/.config/terminator/
-sed -i -e "s+/home/user/Pictures/terminator-debian-wallpaper.jpg+/home/$(whoami)/Pictures/terminator-debian-wallpaper.jpg+g" /home/$(whoami)/.config/terminator/config
-echo -e "\e[1;36m* Done \e[0m"
+cp $SCRIPT_PATH/pictures/terminator-debian-wallpaper.jpg ~/Pictures/terminator-debian-wallpaper.jpg
+sudo cp -r $SCRIPT_PATH/config/terminator/ $HOME/.config/terminator/
+sudo sed -i -e "s+/home/user/Pictures/terminator-debian-wallpaper.jpg+$HOME/Pictures/terminator-debian-wallpaper.jpg+g" $HOME/.config/terminator/config
+sudo sed -i -e "s+#force_color_prompt=yes+force_color_prompt=yes+g" $HOME/.bashrc
+echo -e "\e[1;34m* Done \e[0m"
+
 ## Cafeine
 echo -e "\n\e[1;34m* Downloading Caffeine\e[0m"
 sudo apt install caffeine -y
-# edit Editing caffeine start-up entry: in ~/.config/autostart/caffeine.desktop replace Exec=/usr/bin/caffeine  with Exec=/usr/bin/caffeine-indicator
-sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" ~/.config/autostart/caffeine.desktop
+#show all startup entry
+sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
+# edit Editing caffeine start-up entry
+sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop 
 echo -e "\e[1;34m* Done \e[0m"
 echo -e "\e[1;36m** Done \e[0m"
 
 
 ### Install vscode and extensions
-echo -e "\n\e[1;36m* Downloading VSCode\e[0m"
+echo -e "\n\e[1;36m** Downloading VSCode\e[0m"
 sudo apt install software-properties-common apt-transport-https wget -y
 wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 sudo apt update
 sudo apt install code
+echo -e "\n\e[1;34m* Removing double repository entry\e[0m"
+# fixes W: Duplicate sources.list entry http://packages.microsoft.com/repos/vscode stable Release
+sudo sed -i -e "s+deb+#deb+g" /etc/apt/sources.list.d/vscode.list
+echo -e "\e[1;34m* Done \e[0m"
 
 echo -e "\n\e[1;34m* Adding VSCode extesions\e[0m"
 code --install-extension ajshort.msg
@@ -60,11 +81,11 @@ code --install-extension twxs.cmake
 code --install-extension vscode-icons-team.vscode-icons
 code --install-extension wayou.vscode-todo-highlight
 echo -e "\e[1;34m* Done \e[0m"
-sudo cp $script_path/config/vscode/settings.json /home/$(whoami)/.config/Code/User/settings.json
+sudo cp $SCRIPT_PATH/config/vscode/settings.json $HOME/.config/Code/User/settings.json
 echo -e "\e[1;36m** Done \e[0m"
 
 ### Install NordVPN
-echo -e "\n\e[1;36m* Downloading NordVPN\e[0m"
+echo -e "\n\e[1;36m** Downloading NordVPN\e[0m"
 sudo wget -qnc https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
 sudo apt update
 sudo apt install nordvpn
@@ -72,9 +93,9 @@ echo -e "\e[1;36m** Done \e[0m"
 
 ### Change theme 
 echo -e "\n\e[1;36m* Changing Appearence\e[0m"
-cp $script_path/pictures/Debian_background.png ~/Pictures/Debian_background.png
+cp $SCRIPT_PATH/pictures/Debian_background.png ~/Pictures/Debian_background.png
 # Change backgorund
-gsettings set org.gnome.desktop.background picture-uri "file:///home/$(whoami)/Pictures/Debian_background.png"
+gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Debian_background.png"
 # Change launcher position
 gsettings set com.canonical.Unity.Launcher launcher-position Bottom
 # Change launcer icon size
@@ -94,7 +115,7 @@ echo -e "\n\e[1;34m* Chose a theme \e[0m(I recommend Arc-dark)"
 
 function loop_theme() {
   unity-tweak-tool -a;
-  read -p "Did you change the theme? [y/N]" prompt
+  read -p "Did you chose your favorite theme? [y/N]" prompt
   if ! { [[ $prompt =~ [yY](es)* ]]; }
   then 
     loop_theme
@@ -118,7 +139,6 @@ function loop_reboot() {
     loop_reboot
   fi
 }
-
 loop_reboot
 
 echo -e "\e[1;36m** Setup completed, enjoy! \e[0m\n"
