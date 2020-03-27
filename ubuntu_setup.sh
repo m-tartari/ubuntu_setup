@@ -86,9 +86,11 @@ echo -e "\e[1;36m** Done \e[0m"
 
 ### Install NordVPN
 echo -e "\n\e[1;36m** Downloading NordVPN\e[0m"
-sudo wget -qnc https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
+sudo wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb -P $HOME/Downloads/
+sudo dpkg -i $HOME/Downloads/nordvpn-release_1.0.0_all.deb
 sudo apt update
-sudo apt install nordvpn
+sudo apt install nordvpn -y
+rm -f /home/michele/Downloads/nordvpn-release_1.0.0_all.deb
 echo -e "\e[1;36m** Done \e[0m"
 
 ### Change theme 
