@@ -8,6 +8,7 @@ echo -e "\e[1;36m** Updating system \e[0m"
 sudo apt update
 sudo apt upgrade -y
 sudo apt full-upgrade -y
+sudo apt autoremove -y
 echo -e "\e[1;36m** Done \e[0m"
 
 ### Edit Grub
@@ -107,6 +108,8 @@ echo -e "current favorite launcer app: $(gsettings get com.canonical.Unity.Launc
 echo -e "--> new favorite launcer app: ['application://org.gnome.Nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'application://code.desktop', 'unity://expo-icon', 'unity://devices']"
 # the full list of available app can be found at /usr/share/applications/
 gsettings set com.canonical.Unity.Launcher favorites "['application://org.gnome.Nautilus.desktop', 'application://firefox.desktop','application://code.desktop','application://code.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+# enable natural scroll
+gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
 
 echo -e "\n\e[1;34m* Downloading new themes\e[0m"
 sudo add-apt-repository ppa:noobslab/themes
