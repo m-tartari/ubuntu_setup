@@ -11,7 +11,7 @@ git clone https://github.com/m-tartari/ubuntu_setup.git
 ./ubuntu_setup/ubuntu_setup.sh
 ```
 
-If it fails to start you might need to make it executable the run it again:
+If it fails to start you might need to make the bash file executable the run it again:
 
 ```bash
 chmod +x ./ubuntu_setup/ubuntu_setup.sh
