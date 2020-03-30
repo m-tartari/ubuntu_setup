@@ -81,6 +81,9 @@ code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension twxs.cmake
 code --install-extension vscode-icons-team.vscode-icons
 code --install-extension wayou.vscode-todo-highlight
+code --install-extension grapecity.gc-excelviewer
+code --install-extension james-yu.latex-workshop
+code --install-extension shd101wyy.markdown-preview-enhanced
 echo -e "\e[1;34m* Done \e[0m"
 sudo cp $SCRIPT_PATH/config/vscode/settings.json $HOME/.config/Code/User/settings.json
 echo -e "\e[1;36m** Done \e[0m"
