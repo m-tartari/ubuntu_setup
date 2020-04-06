@@ -27,6 +27,7 @@ echo -e "\n\e[1;36m** Installing utilities \e[0m"
 sudo apt update
 sudo apt install vlc -y
 sudo apt install gparted -y 
+
 # Terminator
 echo -e "\n\e[1;34m* Downloading Terminator\e[0m"
 sudo apt install terminator -y
@@ -42,7 +43,20 @@ sudo apt install caffeine -y
 #show all startup entry
 sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
 # edit Editing caffeine start-up entry
-sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop 
+sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop
+echo -e "\e[1;34m* Done \e[0m"
+
+## WineHQ (windows compatibility layer)
+echo -e "\n\e[1;34m* Downloading Wine\e[0m"
+sudo dpkg --add-architecture i386
+wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
+#  Ubuntu 16.04 
+sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
+#  Ubuntu 18.04 
+# sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
+# sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport
+sudo apt update
+sudo apt install --install-recommends winehq-stable
 echo -e "\e[1;34m* Done \e[0m"
 echo -e "\e[1;36m** Done \e[0m"
 
