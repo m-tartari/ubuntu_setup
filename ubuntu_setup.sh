@@ -13,7 +13,7 @@ echo -e "\e[1;36m** Done \e[0m"
 
 ### Edit Grub
 echo -e "\n\e[1;36m** Modifying GRUB entries \e[0m"
-sudo add-apt-repository ppa:danielrichter2007/grub-customizer -y 
+  sudo add-apt-repository ppa:danielrichter2007/grub-customizer -y
 sudo apt update
 sudo apt install grub-customizer -y
 #save last selected os (the command needs to be over 2 lines)
@@ -43,7 +43,7 @@ sudo apt install caffeine -y
 #show all startup entry
 sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
 # edit Editing caffeine start-up entry
-sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop
+sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop 
 echo -e "\e[1;34m* Done \e[0m"
 
 ## WineHQ (windows compatibility layer)
@@ -57,6 +57,13 @@ sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial ma
 # sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport
 sudo apt update
 sudo apt install --install-recommends winehq-stable
+echo -e "\e[1;34m* Done \e[0m"
+
+## Install Neofetch
+echo -e "\n\e[1;34m* Downloading Neofetch\e[0m"
+sudo add-apt-repository ppa:dawidd0811/neofetch -y
+sudo apt-get update
+sudo apt-get install neofetch -y
 echo -e "\e[1;34m* Done \e[0m"
 echo -e "\e[1;36m** Done \e[0m"
 
