@@ -1,174 +1,198 @@
 #!/bin/bash
-echo -e "\e[1;32m*** Set-up procedure started \e[0m"
-# HOME=/home/$(whoami)
+
+# set scirpt variables
+GIT_USER_NAME=m-tartari
+GIT_USER_EMAIL=37861893+m-tartari@users.noreply.github.com
 SCRIPT_PATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
-### System Update
-echo -e "\e[1;36m** Updating system \e[0m"
-sudo apt update
-sudo apt upgrade -y
-sudo apt full-upgrade -y
-sudo apt autoremove -y
-echo -e "\e[1;36m** Done \e[0m"
-
-### Edit Grub
-echo -e "\n\e[1;36m** Modifying GRUB entries \e[0m"
-  sudo add-apt-repository ppa:danielrichter2007/grub-customizer -y
-sudo apt update
-sudo apt install grub-customizer -y
-#save last selected os (the command needs to be over 2 lines)
-sudo sed -i -e 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved\
-GRUB_SAVEDEFAULT=true/g' /etc/default/grub
-sudo update-grub
-echo -e "\e[1;36m** Done \e[0m"
-
-### Utilities
-echo -e "\n\e[1;36m** Installing utilities \e[0m"
-sudo apt update
-sudo apt install vlc -y
-sudo apt install gparted -y 
-
-# Terminator
-echo -e "\n\e[1;34m* Downloading Terminator\e[0m"
-sudo apt install terminator -y
-cp $SCRIPT_PATH/pictures/terminator-debian-wallpaper.jpg ~/Pictures/terminator-debian-wallpaper.jpg
-sudo cp -r $SCRIPT_PATH/config/terminator/ $HOME/.config/terminator/
-sudo sed -i -e "s+/home/user/Pictures/terminator-debian-wallpaper.jpg+$HOME/Pictures/terminator-debian-wallpaper.jpg+g" $HOME/.config/terminator/config
-sudo sed -i -e "s+#force_color_prompt=yes+force_color_prompt=yes+g" $HOME/.bashrc
-echo -e "\e[1;34m* Done \e[0m"
-
-## Cafeine
-echo -e "\n\e[1;34m* Downloading Caffeine\e[0m"
-sudo apt install caffeine -y
-#show all startup entry
-sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
-# edit Editing caffeine start-up entry
-sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop 
-echo -e "\e[1;34m* Done \e[0m"
-
-## WineHQ (windows compatibility layer)
-echo -e "\n\e[1;34m* Downloading Wine\e[0m"
-sudo dpkg --add-architecture i386
-wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-#  Ubuntu 16.04 
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
-#  Ubuntu 18.04 
-# sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
-# sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport
-sudo apt update
-sudo apt install --install-recommends winehq-stable
-echo -e "\e[1;34m* Done \e[0m"
-
-## Install Neofetch
-echo -e "\n\e[1;34m* Downloading Neofetch\e[0m"
-sudo add-apt-repository ppa:dawidd0811/neofetch -y
-sudo apt-get update
-sudo apt-get install neofetch -y
-echo -e "\e[1;34m* Done \e[0m"
-echo -e "\e[1;36m** Done \e[0m"
-
-
-### Install vscode and extensions
-echo -e "\n\e[1;36m** Downloading VSCode\e[0m"
-sudo apt install software-properties-common apt-transport-https wget -y
-wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-sudo apt update
-sudo apt install code
-echo -e "\n\e[1;34m* Removing double repository entry\e[0m"
-# fixes W: Duplicate sources.list entry http://packages.microsoft.com/repos/vscode stable Release
-sudo sed -i -e "s+deb+#deb+g" /etc/apt/sources.list.d/vscode.list
-echo -e "\e[1;34m* Done \e[0m"
-
-echo -e "\n\e[1;34m* Adding VSCode extesions\e[0m"
-code --install-extension ajshort.msg
-code --install-extension ajshort.ros
-code --install-extension alefragnani.Bookmarks
-code --install-extension alefragnani.project-manager
-code --install-extension christian-kohler.path-intellisense
-code --install-extension DavidAnson.vscode-markdownlint
-code --install-extension DotJoshJohnson.xml
-code --install-extension eamodio.gitlens
-code --install-extension esbenp.prettier-vscode
-code --install-extension formulahendry.auto-rename-tag
-code --install-extension Gimly81.matlab
-code --install-extension ms-python.python
-code --install-extension ms-vscode.cpptools
-code --install-extension naumovs.color-highlight
-code --install-extension pijar.ros-snippets
-code --install-extension ritwickdey.LiveServer
-code --install-extension Shan.code-settings-sync
-code --install-extension streetsidesoftware.code-spell-checker
-code --install-extension twxs.cmake
-code --install-extension vscode-icons-team.vscode-icons
-code --install-extension wayou.vscode-todo-highlight
-code --install-extension grapecity.gc-excelviewer
-code --install-extension james-yu.latex-workshop
-code --install-extension shd101wyy.markdown-preview-enhanced
-echo -e "\e[1;34m* Done \e[0m"
-sudo cp $SCRIPT_PATH/config/vscode/settings.json $HOME/.config/Code/User/settings.json
-echo -e "\e[1;36m** Done \e[0m"
-
-### Install NordVPN
-echo -e "\n\e[1;36m** Downloading NordVPN\e[0m"
-sudo wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb -P $HOME/Downloads/
-sudo dpkg -i $HOME/Downloads/nordvpn-release_1.0.0_all.deb
-sudo apt update
-sudo apt install nordvpn -y
-rm -f /home/michele/Downloads/nordvpn-release_1.0.0_all.deb
-echo -e "\e[1;36m** Done \e[0m"
-
-### Change theme 
-echo -e "\n\e[1;36m* Changing Appearence\e[0m"
-cp $SCRIPT_PATH/pictures/Debian_background.png ~/Pictures/Debian_background.png
-# Change backgorund
-gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Debian_background.png"
-# Change launcher position
-gsettings set com.canonical.Unity.Launcher launcher-position Bottom
-# Change launcer icon size
-gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ icon-size 48
-# Replace Favorite apps on launcer
-echo -e "current favorite launcer app: $(gsettings get com.canonical.Unity.Launcher favorites)"
-echo -e "--> new favorite launcer app: ['application://org.gnome.Nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'application://code.desktop', 'unity://expo-icon', 'unity://devices']"
-# the full list of available app can be found at /usr/share/applications/
-gsettings set com.canonical.Unity.Launcher favorites "['application://org.gnome.Nautilus.desktop', 'application://firefox.desktop','application://code.desktop','application://code.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
-# enable natural scroll
-gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
-
-echo -e "\n\e[1;34m* Downloading new themes\e[0m"
-sudo add-apt-repository ppa:noobslab/themes
-sudo apt-get update
-sudo apt-get install unity-tweak-tool arc-theme -y
-echo -e "\e[1;34m*Done \e[0m"
-echo -e "\n\e[1;34m* Chose a theme \e[0m(I recommend Arc-dark)"
-
-function loop_theme() {
-  unity-tweak-tool -a;
-  read -p "Did you chose your favorite theme? [y/N]" prompt
-  if ! { [[ $prompt =~ [yY](es)* ]]; }
-  then 
-    loop_theme
+## define functions used in this script
+add_to_file_if_missing () {
+  #usage add_to_file_if_missing FILE LINE (COMMENT?)
+  if [ $# -eq 3 ]; then
+    grep -qxF -- "$2" "$1" || (echo "$3" >> "$1" && echo "$2" >> "$1")
+  elif [ $# -eq 2 ]; then
+    grep -qxF -- "$2" "$1" || echo "$2" >> "$1"
+  else
+    echo -e "\033[38;5;178m[warning] add_to_file_if_missing received invalid number of args ($#). Ignoring comand\033[0m"
   fi
 }
-loop_theme
-echo -e "\e[1;34m*Done \e[0m"
 
-### Recommend reboot
-echo -e "\n\e[1;32m*** Done \e[0m(reboot recommend)"
 function loop_reboot() {
   read -p "Should I reboot? [y/N]" prompt
-  if [[ $prompt =~ [yY](es)* ]]
-  then 
-    echo "rebooting"
+  if [[ $prompt =~ [yY](es)* ]]; then
     sudo reboot
-  elif [[ $prompt =~ [nN](o)* ]]
-  then
-    echo "then I will NOT reboot"
+  elif [[ $prompt =~ [nN](o)* ]]; then
+    echo -e "\e[1;36m** Enjoy! \e[0m\n"
   else
     loop_reboot
   fi
 }
-loop_reboot
 
-echo -e "\e[1;36m** Setup completed, enjoy! \e[0m\n"
+
+echo -e "\e[1;32m*** Set-up procedure started \e[0m"
+source /etc/os-release
+
+### System Update
+echo -e "\e[1;36m* Updating system \e[0m"
+sudo apt update
+sudo apt upgrade -y
+sudo apt full-upgrade -y
+sudo apt autoremove -y
+sudo snap refresh
+echo -e "\e[1;36m* Done \e[0m"
+
+### Edit Grub
+echo -e "\n\e[1;36m* Modifying GRUB entries \e[0m"
+#save last selected os (the command needs to be over 2 lines)
+sudo sed -i -e 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved\
+GRUB_SAVEDEFAULT=true/g' /etc/default/grub
+sudo update-grub
+echo -e "\e[1;36m* Done \e[0m"
+
+### Utilities
+echo -e "\n\e[1;36m* Installing utilities \e[0m"
+
+## Terminator
+echo -e "\n\e[1;34m** Terminator\e[0m"
+read -p "Should I install Terminator? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo add-apt-repository ppa:mattrose/terminator
+  sudo apt-get update
+  sudo apt install terminator
+  # set as default
+  gsettings set org.gnome.desktop.default-applications.terminal exec /usr/bin/terminator
+  gsettings set org.gnome.desktop.default-applications.terminal exec-arg "-x"
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+
+## Git
+echo -e "\n\e[1;34m** Git\e[0m"
+read -p "Should I install git? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo add-apt-repository ppa:git-core/ppa
+  sudo apt install git
+  git config --global user.name $GIT_USER_NAME
+  git config --global user.email $GIT_USER_EMAIL
+
+  echo -e "\e[1;34m*** GPG key \e[0m"
+  read -p "Should I add and configure a new gpg key? [y/N]" prompt
+  if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+    gpg --full-generate-key
+    # see https://stackoverflow.com/a/58379307/22225741 for regex explanation
+    GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format=long | sed -nr 's/sec\s*\w+\/(\w+).*/\1/p')
+
+    # Prints the GPG key ID, in ASCII armor format
+    gpg --armor --export $GPG_KEY_ID
+    echo -e '\nCopy the GPG key above (including "-----BEGIN PGP PUBLIC KEY BLOCK-----" and "-----END PGP PUBLIC KEY BLOCK-----") and add it to your github account'
+    echo -e 'for details see https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account \n'
+    read -p "Once done, press any ENTER to continue. "
+
+    git config --global --unset gpg.format
+    git config --global user.signingkey $GPG_KEY_ID
+    git config --global commit.gpgsign true
+
+    add_to_file_if_missing ~/.bashrc "export GPG_TTY=\$(tty)" "# for gpg signing in vscode"
+
+    unset GPG_KEY_ID
+    echo -e "\e[1;34m*** Done \e[0m"
+  else
+    echo -e "\e[1;34m*** Skipped \e[0m"
+  fi
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+
+## Cafeine
+echo -e "\n\e[1;34m** Cafeine \e[0m"
+read -p "Should I install Cafeine? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo apt update
+  sudo apt install caffeine -y
+
+  # show all startup entry
+  sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
+  # edit Editing caffeine start-up entry
+  sudo sed -i -e "s+Exec=/usr/bin/caffeine+Exec=/usr/bin/caffeine-indicator+g" /etc/xdg/autostart/caffeine.desktop
+
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+
+## VLC
+echo -e "\n\e[1;34m** VLC \e[0m"
+read -p "Should I install VLC? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo snap install vlc -y
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+## GParted
+echo -e "\n\e[1;34m** GParted \e[0m"
+read -p "Should I install GParted? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo apt update
+  sudo apt install gparted -y
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+## gnome-tweaks
+echo -e "\n\e[1;34m** gnome-tweaks \e[0m"
+read -p "Should I install gnome-tweaks? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+  sudo apt update
+  sudo apt install gnome-tweaks
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+
+## WineHQ (windows compatibility layer)
+echo -e "\n\e[1;34m** Downloading Wine\e[0m"
+sudo mkdir -pm755 /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/$UBUNTU_CODENAME/winehq-$UBUNTU_CODENAME.sources
+sudo apt update
+sudo apt install --install-recommends winehq-stable
+echo -e "\e[1;34m* Done \e[0m"
+
+## Neofetch
+echo -e "\n\e[1;34m** Neofetch \e[0m"
+read -p "Should I install ? [Y/n]" prompt
+if [[ $prompt =~ [yY](es)* ]] || [[ -z $prompt ]]; then
+echo -e "\n\e[1;34m** Downloading Neofetch\e[0m"
+sudo apt update
+sudo apt install neofetch -y
+  echo -e "\e[1;34m** Done \e[0m"
+else
+  echo -e "\e[1;34m** Skipped \e[0m"
+fi
+
+### Change Preferences
+echo -e "\n\e[1;36m* Changing Preferences\e[0m"
+cp -r $SCRIPT_PATH/.bash* ~
+# cp -r $SCRIPT_PATH/configs/.config ~
+# cp -r $SCRIPT_PATH/configs/vscode ~/.vscode
+# cp -r $SCRIPT_PATH/.ssh ~/.ssh
+# cp -r $SCRIPT_PATH/Documents/* ~/Documents/
+cp -r $SCRIPT_PATH/Pictures/* ~/Pictures/
+# cp -r $SCRIPT_PATH/Videos/* ~/Videos/
+# cp -r $SCRIPT_PATH/apps ~
+echo -e "\e[1;34m* Done \e[0m"
+
+### cleanup script variables
+unset GIT_USER_NAME
+unset GIT_USER_EMAIL
+
+### print system info and ecommend reboot
+echo -e "\n\e[1;32m*** Done \e[0m(reboot recommend)"
+echo -e "\n\e[1;34m* System info:\e[0m\n"
+neofetch || sudo dmidecode -t system
+
+loop_reboot
 exit 0
